@@ -31,29 +31,31 @@ This project demonstrates how to identify and exploit common web application vul
 | Browser      | Firefox                                  |
 | Tools Used   | Terminal, Browser, Burp Suite (optional) |
 
+### Install DVWA
+
+ ![Install](images/install-dvwa.png)
+
+ ![Install](images/install-dvwa-contd.png)
+
 ---
 
 ## 🔍 Vulnerabilities Exploited
 
-### 1️⃣ SQL Injection – Login Bypass
+### 1️⃣ Brute force login & SQL Injection
+On the login form, I entered username (1=1) and password (password). Then the username (admin) and password (password). Then the username (admin) and password: empty/nothing.
 
-* **Module:** `SQL Injection`
+**Result:** Login was successful despite not knowing the real credentials. SQL logic was manipulated to always return true.
 
-* **Steps:**
+ ![Admin loginl](images/admin-login.png)
 
-  1. Accessed vulnerable login page.
-  2. Entered the following credentials:
+ ![Dashboard](images/dashboard.png) 
 
-     ```sql
-     Username: admin' OR '1'='1
-     Password: anything
-     ```
-  3. Logged in successfully.
+ Then I changed the security level to Low (for ease of exploitation)
 
-* **Impact:** Authenticated without knowing valid credentials.
+ ![Security](images/change-security-level.png)
 
-* **Screenshot:**
-  ![SQL Injection Success](screenshots/sql-injection.png)
+* **Why It’s Dangerous/Not Acceptable:**
+Attackers can bypass authentication, steal data, or manipulate the database.
 
 * **Mitigation:**
 
@@ -68,18 +70,21 @@ This project demonstrates how to identify and exploit common web application vul
 * **Module:** `Command Execution`
 
 * **Steps:**
+In the command injection module, I wrote the command “127.0.0.1 && whoami” in the input field. Whereas the input field is only supposed to collect/accept IP addresses (therefore 127.0.0.1), I also included “whoami”, a system/terminal command.
 
-  1. Submitted IP and command:
+**Result:**
+The server responded with system-level information (`www-data`), confirming code execution.
 
-     ```
-     127.0.0.1 && whoami
-     ```
-  2. Output showed system-level command executed.
+ ![Injection](images/command-inj-1.png)
 
-* **Impact:** Remote command execution via input field.
+ ![Install](images/command-inj-2.png)
 
-* **Screenshot:**
-  ![Command Injection](screenshots/command-injection.png)
+ ![Install](images/command-inj-3.png)
+
+
+* **Why It’s Dangerous/Not Acceptable:**
+Attackers can execute arbitrary commands on the server, leading to full system compromise.
+
 
 * **Mitigation:**
 
@@ -89,50 +94,36 @@ This project demonstrates how to identify and exploit common web application vul
 
 ---
 
-### 3️⃣ Cross-Site Scripting (XSS)
-
-* **Module:** `Reflected XSS`
+### 4️⃣ Admin Panel  and other hidden directories bypass
 
 * **Steps:**
+Using gobuster, I was able to detect some hidden directories and navigated to them manually, using the direct links/paths, thereby bypassing any access control on those pages
 
-  1. Injected JavaScript in URL/form input:
+Gobuster Installation
 
-     ```html
-     <script>alert('XSS')</script>
-     ```
-  2. Script executed in the browser.
+ ![Install](images/gobuster-install1.png)
 
-* **Impact:** Execution of arbitrary JS in the user's browser.
+ ![Install](images/gobuster-install2.png)
 
-* **Screenshot:**
-  ![XSS Popup](screenshots/xss.png)
 
-* **Mitigation:**
 
-  * Encode output
-  * Use frameworks with built-in XSS protection
-  * Implement Content Security Policy (CSP)
+Gobuster result showing hidden directory paths
 
----
+ ![Install](images/gobuster-use.png)
 
-### 4️⃣ Admin Panel Access – Login Bypass
 
-* **Steps:**
+* **Result:** Successfully gained admin-level access.
 
-  1. Visited default login path: `http://localhost/dvwa/login.php`
-  2. Used SQLi to bypass login:
+ ![Install](images/hidden2.png)
 
-     ```sql
-     Username: ' OR '1'='1 --
-     Password: anything
-     ```
-  3. Gained access to admin-level features.
+ ![Install](images/hidden3.png)
 
-* **Impact:** Full backend access without credentials.
+ ![Install](images/hidden4.png)
 
-* **Screenshot:**
-  ![Admin Panel Access](screenshots/admin-panel.png)
 
+* **Why it’s not ideal:**
+Unauthorized access to sensitive admin controls can lead to complete compromise
+ 
 * **Mitigation:**
 
   * Secure authentication using prepared statements
