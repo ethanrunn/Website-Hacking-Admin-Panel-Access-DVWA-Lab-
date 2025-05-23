@@ -85,7 +85,6 @@ The server responded with system-level information (`www-data`), confirming code
 * **Why It’s Dangerous/Not Acceptable:**
 Attackers can execute arbitrary commands on the server, leading to full system compromise.
 
-
 * **Mitigation:**
 
   * Use whitelisting for allowed inputs
@@ -105,12 +104,9 @@ Gobuster Installation
 
  ![Install](images/gobuster-install2.png)
 
-
-
 Gobuster result showing hidden directory paths
 
  ![Install](images/gobuster-use.png)
-
 
 * **Result:** Successfully gained admin-level access.
 
@@ -119,7 +115,6 @@ Gobuster result showing hidden directory paths
  ![Install](images/hidden3.png)
 
  ![Install](images/hidden4.png)
-
 
 * **Why it’s not ideal:**
 Unauthorized access to sensitive admin controls can lead to complete compromise
